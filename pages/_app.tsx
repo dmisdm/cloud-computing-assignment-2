@@ -6,11 +6,18 @@ import { createClient, Provider } from "urql";
 import { Preflight } from "@xstyled/emotion";
 
 const client = createClient({ url: "/api/graphql" });
-function MyApp({ Component, pageProps }) {
+function MyApp<Props>({
+  Component,
+  pageProps,
+}: {
+  Component: React.ComponentType<Props>;
+  pageProps: Props;
+}) {
   return (
     <Provider value={client}>
       <ThemeProvider theme={theme}>
         <CssBaseline />
+        <Preflight />
         <EmotionThemeProvider theme={theme}>
           <Component {...pageProps} />
         </EmotionThemeProvider>

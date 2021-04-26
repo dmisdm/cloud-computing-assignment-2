@@ -2,7 +2,6 @@ parser: "@typescript-eslint/parser"
 extends:
   - plugin:@typescript-eslint/recommended-requiring-type-checking
   - plugin:type-graphql/recommended
-  - plugin:react/recommended
   - plugin:react-hooks/recommended
 plugins:
   - "type-graphql"

@@ -5,7 +5,7 @@
   "scripts": {
     "dev:next": "next dev",
     "dev:graphql-generate": "yarn generate --watch",
-    "dev": "concurrently 'npm:dev:*'",
+    "dev": "next dev",
     "build": "next build",
     "start": "next start",
     "generate": "graphql-codegen -c .graphqlrc.yml"
@@ -20,11 +20,13 @@
     "@material-ui/styles": "^4.11.3",
     "@types/babel__core": "^7",
     "@types/eslint": "^7",
+    "@types/jsonwebtoken": "^8",
     "@types/node": "^14.14.41",
     "@types/react": "^17.0.3",
     "@typescript-eslint/eslint-plugin": "^4.22.0",
     "@typescript-eslint/parser": "^4.22.0",
     "apollo-server-micro": "^2.23.0",
+    "babel-plugin-parameter-decorator": "^1.0.16",
     "concurrently": "^6.0.2",
     "eslint": "^7.25.0",
     "eslint-plugin-jsx-a11y": "^6.4.1",
@@ -55,8 +57,11 @@
     "@typescript-eslint/types": "^4.22.0",
     "@xstyled/emotion": "^2.4.1",
     "@xstyled/util": "^2.2.3",
+    "date-fns": "^2.21.1",
     "graphql-tools": "^7.0.4",
+    "jsonwebtoken": "^8.5.1",
     "reflect-metadata": "^0.1.13",
+    "superstruct": "^0.15.1",
     "ts-node": "^9.1.1",
     "type-graphql": "^1.1.1"
   }
