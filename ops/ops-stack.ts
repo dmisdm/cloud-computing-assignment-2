@@ -21,7 +21,6 @@ export class OpsStack extends cdk.Stack {
     super(scope, id, props);
     const vpc = new ec2.Vpc(this, "mainVpc");
     const s3Bucket = new s3.Bucket(this, "assets");
-
     const loginTable = new dynamodb.Table(this, "login", {
       partitionKey: { name: "id", type: AttributeType.NUMBER },
       tableName: "login",
@@ -30,17 +29,17 @@ export class OpsStack extends cdk.Stack {
       partitionKey: { name: "id", type: AttributeType.NUMBER },
       tableName: "music",
     });
+    const assetsPath = path.resolve(__dirname, "../out");
+
     const ec2Instance = new ec2.Instance(this, "server", {
       instanceType: InstanceType.of(InstanceClass.T2, InstanceSize.MICRO),
-      machineImage: MachineImage.lookup({ name: "ami-0a43280cfb87ffdba" }),
+      machineImage: MachineImage.lookup({ name: "Ubuntu Server 20.04" }),
       vpc,
-      vpcSubnets: vpc.selectSubnets({ subnetFilters: [] }),
+      vpcSubnets: vpc.selectSubnets({ subnetType: SubnetType.PUBLIC }),
       init: CloudFormationInit.fromElements(
         InitPackage.apt("nodejs"),
         InitCommand.shellCommand("npm install --global yarn"),
-        InitSource.fromAsset("/app", "../", {
-          exclude: ["ops", "node_modules", "out", ".next"],
-        }),
+        InitSource.fromAsset("/app", assetsPath),
         InitCommand.shellCommand("cd /app && PORT=80 yarn start")
       ),
     });
