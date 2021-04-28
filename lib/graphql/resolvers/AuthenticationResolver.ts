@@ -6,10 +6,8 @@ import {
   ObjectType,
   Resolver,
 } from "type-graphql";
-import { BaseError } from "../errors";
+import { BaseApiError } from "../../api/errors";
 import { AuthTokenPayload, authTokenPayload } from "../types";
-
-class InvalidCredentialsError extends BaseError {}
 
 @ObjectType()
 export class AuthTokenPayloadObject implements AuthTokenPayload {

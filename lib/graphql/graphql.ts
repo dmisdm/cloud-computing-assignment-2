@@ -1,4 +1,4 @@
-import { makeApolloServer } from "lib/graphql/server";
+/* import { makeApolloServer } from "lib/graphql/server";
 
 export const config = {
   api: {
@@ -8,3 +8,4 @@ export const config = {
 
 const server = await makeApolloServer();
 export default server.createHandler({ path: "/api/graphql" });
+ */

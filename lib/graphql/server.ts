@@ -6,7 +6,7 @@ import { authChecker } from "./authChecker";
 import { GraphqlContext } from "./types";
 import { authCookieKey, verifyAndDecodeToken } from "./auth";
 import { NextApiRequest } from "next";
-import { InvalidAuthToken } from "./errors";
+import { InvalidAuthToken } from "../api/errors";
 import { AuthenticationResolver } from "./resolvers/AuthenticationResolver";
 
 export const makeApolloServer = async () =>
