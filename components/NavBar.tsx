@@ -1,11 +1,12 @@
-import { Box, TextField, Typography } from "@material-ui/core";
+import { Box, Button, TextField, Typography } from "@material-ui/core";
 import { useTheme } from "@material-ui/styles";
 import { x } from "@xstyled/emotion";
 import { useUser } from "lib/state/User";
 import Search from "@material-ui/icons/Search";
+import { meta } from "lib/meta";
 export function NavBar() {
   const theme = useTheme();
-  const user = useUser(false).get()?.user;
+  const { state, logout } = useUser(false);
   return (
     <x.header
       position="sticky"
@@ -19,16 +20,22 @@ export function NavBar() {
       w="100%"
     >
       <Box clone flexShrink={0}>
-        <Typography variant="h5">Music App</Typography>
+        <Typography variant="h5">{meta.appName}</Typography>
       </Box>
 
-      <TextField
-        style={!user ? { visibility: "hidden" } : undefined}
-        variant="outlined"
-        InputProps={{ startAdornment: <Search /> }}
-        label="Search"
-        fullWidth
-      />
+      {state.value.user && (
+        <TextField
+          variant="outlined"
+          InputProps={{ startAdornment: <Search /> }}
+          label="Search"
+          fullWidth
+        />
+      )}
+      {state.value.user && (
+        <x.div row justifyContent="flex-end">
+          <Button onClick={() => logout()}>Logout</Button>
+        </x.div>
+      )}
     </x.header>
   );
 }

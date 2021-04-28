@@ -3,9 +3,9 @@ import { createApiError } from "lib/types";
 import { NextApiResponse } from "next";
 
 export abstract class BaseApiError<Details = unknown> {
-  details?: Details;
   abstract message: string;
   abstract statusCode: StatusCodes;
+  constructor(public details?: Details) {}
 
   send(res: NextApiResponse) {
     res.status(this.statusCode);

@@ -1,14 +1,17 @@
+import { parseISO, fromUnixTime } from "date-fns";
 import {
   coerce,
   create,
   date,
   Infer,
+  number,
   object,
   string,
   Struct,
+  type,
+  union,
   unknown,
 } from "superstruct";
-import { parseISO } from "date-fns";
 export const APIError = object({
   errorMessage: string(),
   errorName: string(),
@@ -22,7 +25,9 @@ export const createStruct = <Type, Schema>(
   data: Infer<typeof struct>
 ) => create(data, struct);
 
-const coercedDate = coerce(date(), string(), (value) => parseISO(value));
+const expDate = coerce(date(), union([string(), number()]), (value) =>
+  typeof value === "string" ? parseISO(value) : fromUnixTime(value)
+);
 export namespace Login {
   export const LoginRequest = object({
     id: string(),
@@ -32,6 +37,22 @@ export namespace Login {
   export const LoginSuccess = object({
     id: string(),
     name: string(),
-    expiry: coercedDate,
+    expiry: expDate,
   });
 }
+
+export type User = {
+  id: string;
+  name: string;
+};
+export type GraphqlContext = {
+  user?: User;
+};
+
+export const authTokenPayload = type({
+  userId: string(),
+  userName: string(),
+  exp: expDate,
+});
+
+export type AuthTokenPayload = typeof authTokenPayload.TYPE;

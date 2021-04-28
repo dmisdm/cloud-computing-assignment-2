@@ -4,7 +4,7 @@ import { buildSchema } from "type-graphql";
 import { UsersResolver } from "./resolvers/UsersResolver";
 import { authChecker } from "./authChecker";
 import { GraphqlContext } from "./types";
-import { authCookieKey, verifyAndDecodeToken } from "./auth";
+import { authCookieKey, verifyAndDecodeToken } from "../auth";
 import { NextApiRequest } from "next";
 import { InvalidAuthToken } from "../api/errors";
 import { AuthenticationResolver } from "./resolvers/AuthenticationResolver";

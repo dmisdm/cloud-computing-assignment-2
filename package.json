@@ -2,13 +2,19 @@
   "name": "cloud-computing-assignment-2",
   "version": "0.1.0",
   "private": true,
+  "workspaces": {
+    "packages": [
+      "ops"
+    ]
+  },
   "scripts": {
     "dev:next": "next dev",
     "dev:graphql-generate": "yarn generate --watch",
     "dev": "next dev",
-    "build": "next build",
+    "build": "next build && next export",
     "start": "next start",
-    "generate": "graphql-codegen -c .graphqlrc.yml"
+    "generate": "graphql-codegen -c .graphqlrc.yml",
+    "deploy": "yarn workspace ops deploy"
   },
   "devDependencies": {
     "@graphql-codegen/cli": "^1.21.4",
@@ -54,10 +60,12 @@
     "@graphql-codegen/typescript-operations": "^1.17.16",
     "@graphql-codegen/typescript-resolvers": "^1.19.1",
     "@graphql-codegen/typescript-urql": "^2.0.6",
+    "@hookstate/persistence": "^3.0.0",
     "@ijsto/eslint-config": "^3.0.1",
     "@typescript-eslint/types": "^4.22.0",
     "@xstyled/emotion": "^2.4.1",
     "@xstyled/util": "^2.2.3",
+    "aws-sdk": "^2.894.0",
     "cookie": "^0.4.1",
     "date-fns": "^2.21.1",
     "graphql-tools": "^7.0.4",

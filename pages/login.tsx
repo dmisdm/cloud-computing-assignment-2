@@ -9,7 +9,7 @@ import { useForm } from "react-hook-form";
 
 export default function Login() {
   const loginMutation = useLoginMutation();
-  const user = useUser(false);
+  const { state } = useUser(false);
   const { register, handleSubmit, formState } = useForm<{
     id: string;
     password: string;
@@ -30,7 +30,7 @@ export default function Login() {
           onSubmit={handleSubmit((form) =>
             loginMutation.mutate(form, {
               onSuccess: (data) => {
-                user.user.set({
+                state.user.set({
                   id: data.id,
                   name: data.name,
                   expiry: data.expiry,

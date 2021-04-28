@@ -1,7 +1,7 @@
 import { StatusCodes } from "http-status-codes";
 import { BaseApiError } from "lib/api/errors";
 import { setCookies } from "lib/cookies";
-import { authCookieKey, encodePayload } from "lib/graphql/auth";
+import { authCookieKey, encodePayload } from "lib/auth";
 import { createStruct, Login } from "lib/types";
 import type { NextApiRequest, NextApiResponse } from "next";
 
