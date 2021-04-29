@@ -1,16 +1,18 @@
 import { createState, useState } from "@hookstate/core";
-import { APIError, authTokenPayload, Login } from "lib/types";
+import {
+  APIError,
+  AuthTokenPayload,
+  authTokenPayload,
+  Login,
+  RegisterPage,
+} from "web/lib/types";
 import { useRouter } from "next/router";
 import React from "react";
 import { useMutation } from "react-query";
 import { Persistence } from "@hookstate/persistence";
 export type UserState = {
   hydrated: boolean;
-  user: {
-    id: string;
-    name: string;
-    expiry: Date;
-  } | null;
+  user: AuthTokenPayload | null;
 };
 
 export const userState = createState<UserState>({
@@ -28,11 +30,7 @@ export const hydrateCurrentUser = () => {
       fetch("/api/me")
         .then(async (res) => {
           const response = authTokenPayload.create(await res.json());
-          userState.user.set({
-            id: response.userId,
-            name: response.userName,
-            expiry: response.exp,
-          });
+          userState.user.set(response);
         })
         .catch(() => {
           userState.user.set(null);
@@ -57,7 +55,7 @@ export const useUser = (redirectIfUnauthenticated: boolean = true) => {
     }
   });
   return {
-    state,
+    state: state,
     logout: React.useCallback(() => {
       state.user.set(null);
       router.push("/login");
@@ -70,7 +68,7 @@ export const useLoginMutation = () =>
   useMutation<
     typeof Login.LoginSuccess.TYPE,
     typeof APIError["TYPE"] | string,
-    { id: string; password: string }
+    typeof Login.LoginRequest.TYPE
   >("login", (params) =>
     fetch("/api/login", {
       method: "POST",
@@ -81,6 +79,26 @@ export const useLoginMutation = () =>
     }).then(async (r) => {
       if (r.ok) {
         return Login.LoginSuccess.create(await r.json());
+      } else {
+        throw APIError.create(await r.json());
+      }
+    })
+  );
+export const useRegisterMutation = () =>
+  useMutation<
+    typeof RegisterPage.RegistrationSucessResponse.TYPE,
+    typeof APIError["TYPE"] | string,
+    typeof RegisterPage.RegistrationRequest.TYPE
+  >("login", (params) =>
+    fetch("/api/register", {
+      method: "POST",
+      body: JSON.stringify(params),
+      headers: {
+        "Content-Type": "application/json",
+      },
+    }).then(async (r) => {
+      if (r.ok) {
+        return RegisterPage.RegistrationSucessResponse.create(await r.json());
       } else {
         throw APIError.create(await r.json());
       }

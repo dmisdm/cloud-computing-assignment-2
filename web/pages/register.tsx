@@ -1,19 +1,18 @@
-import { Box, Button, Card, TextField, Typography } from "@material-ui/core";
-import { useTheme } from "@material-ui/styles";
+import { Button, Card, Typography } from "@material-ui/core";
 import { x } from "@xstyled/emotion";
-import { FormTextField } from "components/FormTextField";
-import { NavBar } from "components/NavBar";
-import { useLoginMutation, useUser } from "lib/state/User";
+import { FormError } from "components/FormError";
+import { useRegisterMutation, useUser } from "lib/state/User";
+import { RegisterPage } from "lib/types";
 import { useRouter } from "next/router";
 import { useForm } from "react-hook-form";
+import { FormTextField } from "web/components/FormTextField";
+import { NavBar } from "web/components/NavBar";
 
-export default function Login() {
-  const loginMutation = useLoginMutation();
-  const { state } = useUser(false);
-  const { register, handleSubmit, formState } = useForm<{
-    id: string;
-    password: string;
-  }>();
+export default function LoginPage() {
+  const registerMutation = useRegisterMutation();
+  const { register, handleSubmit, formState } = useForm<
+    typeof RegisterPage.RegistrationRequest.TYPE
+  >();
 
   const router = useRouter();
   return (
@@ -28,14 +27,11 @@ export default function Login() {
       >
         <form
           onSubmit={handleSubmit((form) =>
-            loginMutation.mutate(form, {
+            registerMutation.mutate(form, {
               onSuccess: (data) => {
-                state.user.set({
-                  id: data.id,
-                  name: data.name,
-                  expiry: data.expiry,
-                });
-                router.push("/");
+                // Could log the user in here?
+                //state.user.set(data);
+                router.push("/login");
               },
             })
           )}
@@ -54,9 +50,17 @@ export default function Login() {
               formState={formState}
               register={register}
               required
-              name="id"
+              name="email"
               autoComplete="email"
               type="email"
+            />
+            <FormTextField
+              label="Name"
+              formState={formState}
+              register={register}
+              required
+              name="name"
+              autoComplete="name"
             />
             <FormTextField
               label="Password"
@@ -65,17 +69,13 @@ export default function Login() {
               required
               name="password"
               type="password"
-              autoComplete="current-password"
+              autoComplete="new-password"
             />
             <Button type="submit" variant="outlined" color="primary">
-              Login
+              Register
             </Button>
-            {loginMutation.error && (
-              <Typography variant="caption" color="error">
-                {typeof loginMutation.error === "string"
-                  ? loginMutation.error
-                  : loginMutation.error.errorMessage}
-              </Typography>
+            {registerMutation.error && (
+              <FormError error={registerMutation.error} />
             )}
           </Card>
         </form>

@@ -1,4 +1,4 @@
-import { authCookieKey, verifyAndDecodeToken } from "lib/auth";
+import { authCookieKey, verifyAndDecodeToken } from "web/lib/auth";
 import { NextApiRequest, NextApiResponse } from "next";
 
 export default (req: NextApiRequest, res: NextApiResponse) => {

@@ -1,30 +1,31 @@
 import { StatusCodes } from "http-status-codes";
 import { BaseApiError } from "lib/api/errors";
 import { setCookies } from "lib/cookies";
-import { authCookieKey, encodePayload } from "lib/auth";
-import { createStruct, Login } from "lib/types";
+import { authCookieKey } from "lib/auth";
+import { createStruct, Login } from "web/lib/types";
 import type { NextApiRequest, NextApiResponse } from "next";
+import { userService } from "lib/services/root";
 
 class InvalidCredentialsError extends BaseApiError {
   message = "Email or password is incorrect";
   statusCode = StatusCodes.BAD_REQUEST;
 }
 
-export default (req: NextApiRequest, res: NextApiResponse) => {
+export default async (req: NextApiRequest, res: NextApiResponse) => {
   const body = Login.LoginRequest.create(req.body);
-  if (body.id !== "test@test" || body.password !== "test") {
+  const credentialsValidationResult = await userService.validateCredentials(
+    body
+  );
+  if (!credentialsValidationResult) {
     new InvalidCredentialsError().send(res);
   } else {
-    const { token, exp } = encodePayload({
-      userId: "test",
-      userName: "Test User",
-    });
+    const { token, exp } = credentialsValidationResult;
     setCookies(res, [{ name: authCookieKey, value: token }]);
     res.send(
       createStruct(Login.LoginSuccess, {
-        id: "test@test",
-        name: "Test User",
-        expiry: exp,
+        email: "test@test",
+        username: "Test User",
+        exp,
       })
     );
   }

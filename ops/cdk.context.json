@@ -3,5 +3,6 @@
     "ap-southeast-2a",
     "ap-southeast-2b",
     "ap-southeast-2c"
-  ]
+  ],
+  "ami:account=163565994931:filters.image-type.0=machine:filters.name.0=Ubuntu Server 20.04*:filters.state.0=available:region=ap-southeast-2": "ami-0a4a2fecf8ccd7c03"
 }

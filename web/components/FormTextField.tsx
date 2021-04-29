@@ -25,14 +25,14 @@ export function FormTextField<
   register: UseFormRegister<FormValues>;
   required?: boolean;
 }) {
+  const shouldShowError =
+    !!formState.touchedFields[name] || formState.isSubmitted;
   return (
     <TextField
       {...props}
       label={label}
-      error={!!formState.touchedFields[name] && !!formState.errors[name]}
-      helperText={
-        !!formState.touchedFields[name] && get(formState.errors, name)?.message
-      }
+      error={shouldShowError && !!formState.errors[name]}
+      helperText={shouldShowError && get(formState.errors, name)?.message}
       InputProps={register(name, {
         required: required ? `${label} is required` : undefined,
       })}

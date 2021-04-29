@@ -1,6 +1,6 @@
 import { StatusCodes } from "http-status-codes";
-import { createApiError } from "lib/types";
 import { NextApiResponse } from "next";
+import { createApiError } from "web/lib/types";
 
 export abstract class BaseApiError<Details = unknown> {
   abstract message: string;

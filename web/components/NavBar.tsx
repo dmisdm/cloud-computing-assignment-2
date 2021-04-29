@@ -1,12 +1,12 @@
 import { Box, Button, TextField, Typography } from "@material-ui/core";
 import { useTheme } from "@material-ui/styles";
 import { x } from "@xstyled/emotion";
-import { useUser } from "lib/state/User";
+import { useUser } from "web/lib/state/User";
 import Search from "@material-ui/icons/Search";
-import { meta } from "lib/meta";
+import { meta } from "web/lib/meta";
 export function NavBar() {
   const theme = useTheme();
-  const { state, logout } = useUser(false);
+  const { state: state, logout } = useUser(false);
   return (
     <x.header
       position="sticky"
@@ -23,14 +23,7 @@ export function NavBar() {
         <Typography variant="h5">{meta.appName}</Typography>
       </Box>
 
-      {state.value.user && (
-        <TextField
-          variant="outlined"
-          InputProps={{ startAdornment: <Search /> }}
-          label="Search"
-          fullWidth
-        />
-      )}
+      <div />
       {state.value.user && (
         <x.div row justifyContent="flex-end">
           <Button onClick={() => logout()}>Logout</Button>
