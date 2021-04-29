@@ -11,24 +11,29 @@ const lowercasedString = coerce(string(), string(), (value) =>
 );
 const User = object({
   email: intersection([lowercasedString, email]),
-  user_name: lowercasedString,
+  user_name: string(),
   password: string(),
 });
+export type User = typeof User.TYPE;
 
 export class UserService {
   constructor(private db: DynamoDB) {}
-
-  async validateCredentials(params: { email: string; password: string }) {
+  async getUser(email: string): Promise<User | undefined> {
     const { Item } = await this.db.getItem({
       TableName,
-      Key: { email: { S: params.email } },
+      Key: { email: { S: email } },
     });
 
     if (!Item) {
+      return undefined;
+    }
+    return User.create(dynamoDbItemToObject(Item));
+  }
+  async validateCredentials(params: { email: string; password: string }) {
+    const user = await this.getUser(params.email);
+    if (!user) {
       return false;
     }
-    const user = User.create(dynamoDbItemToObject(Item));
-
     if (user.password !== params.password) {
       return false;
     }

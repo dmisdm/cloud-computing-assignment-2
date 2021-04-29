@@ -16,6 +16,8 @@ import {
   refine,
   optional,
   array,
+  defaulted,
+  boolean,
 } from "superstruct";
 export const APIError = coerce(
   object({
@@ -39,7 +41,7 @@ export const createStruct = <Type, Schema>(
   data: Infer<typeof struct>
 ) => create(data, struct);
 
-const expDate = coerce(date(), union([string(), number()]), (value) =>
+const coercedDate = coerce(date(), union([string(), number()]), (value) =>
   typeof value === "string" ? parseISO(value) : fromUnixTime(value)
 );
 export namespace Login {
@@ -50,8 +52,8 @@ export namespace Login {
 
   export const LoginSuccess = object({
     email: string(),
-    username: string(),
-    exp: expDate,
+    name: string(),
+    exp: coercedDate,
   });
 }
 
@@ -82,7 +84,7 @@ export type GraphqlContext = {
 export const authTokenPayload = type({
   email: string(),
   name: string(),
-  exp: expDate,
+  exp: coercedDate,
 });
 
 export type AuthTokenPayload = typeof authTokenPayload.TYPE;
@@ -92,23 +94,34 @@ export namespace Music {
     id: string(),
     title: string(),
     artist: string(),
-    year: number(),
+    year: string(),
     img_url: string(),
     web_url: string(),
   });
   export type SongItem = typeof SongItem.TYPE;
+  export const SongSearchRequest = object({
+    title: optional(string()),
+    artist: optional(string()),
+    year: optional(string()),
+    limit: defaulted(number(), 200),
+  });
+  export type SongSearchRequest = typeof SongSearchRequest.TYPE;
 }
 export namespace Subscriptions {
   export const SubscriptionItem = object({
+    emailSongId: string(),
     email: string(),
     songId: string(),
+    subscribedAt: coercedDate,
   });
-  export const SubscriptionsPageResponse = array(
-    object({
-      email: string(),
-      song: Music.SongItem,
-    })
-  );
-  export type SubscriptionsPageResponse = typeof SubscriptionsPageResponse.TYPE;
+
   export type SubscriptionItem = typeof SubscriptionItem.TYPE;
+  export const Subscription = object({
+    email: string(),
+    song: Music.SongItem,
+    subscribedAt: coercedDate,
+  });
+  export type Subscription = typeof Subscription.TYPE;
+  export const SubscriptionsPageResponse = array(Subscription);
+  export type SubscriptionsPageResponse = typeof SubscriptionsPageResponse.TYPE;
 }

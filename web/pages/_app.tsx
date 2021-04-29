@@ -1,13 +1,11 @@
 import { CssBaseline, ThemeProvider } from "@material-ui/core";
 import { Preflight, x } from "@xstyled/emotion";
-import { meta } from "web/lib/meta";
+import { queryClient } from "lib/state/queryClient";
+import { theme } from "lib/theme";
 import Head from "next/head";
 import React from "react";
-import { QueryClient, QueryClientProvider } from "react-query";
-import "../styles/globals.css";
-import { theme } from "lib/theme";
-
-const queryClient = new QueryClient();
+import { QueryClientProvider } from "react-query";
+import { meta } from "web/lib/meta";
 
 function MyApp<Props>({
   Component,
@@ -33,7 +31,7 @@ function MyApp<Props>({
           <CssBaseline />
           <Preflight />
 
-          <x.div h="100vh" w="100vw">
+          <x.div h="100vh" w="100vw" overflowY="auto" overflowX="hidden">
             <Component {...pageProps} />
           </x.div>
         </ThemeProvider>

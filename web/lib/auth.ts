@@ -7,6 +7,10 @@ export const encodePayload = (payload: Omit<AuthTokenPayload, "exp">) => {
   const expiresInHours = 1;
   const exp = add(new Date(), { hours: expiresInHours });
   return {
+    payload: {
+      ...payload,
+      exp,
+    },
     token: sign({ ...payload, exp: exp.valueOf() / 1000 }, secret),
     exp,
   };

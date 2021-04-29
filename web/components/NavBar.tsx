@@ -1,9 +1,10 @@
-import { Box, Button, TextField, Typography } from "@material-ui/core";
+import { Box, Button, Typography } from "@material-ui/core";
 import { useTheme } from "@material-ui/styles";
 import { x } from "@xstyled/emotion";
-import { useUser } from "web/lib/state/User";
-import Search from "@material-ui/icons/Search";
 import { meta } from "web/lib/meta";
+import { useUser } from "web/lib/state/User";
+import { Padding } from "./Padding";
+
 export function NavBar() {
   const theme = useTheme();
   const { state: state, logout } = useUser(false);
@@ -12,21 +13,30 @@ export function NavBar() {
       position="sticky"
       top={0}
       display="grid"
-      gridTemplateColumns="minmax(10rem, 1fr) 1fr 1fr"
-      gap="1rem"
+      px="2rem"
+      py="1rem"
+      gridTemplateColumns="minmax(10rem, 1fr)  auto"
       alignItems="center"
-      p="1rem"
       borderBottom={`solid 1px ${theme.palette.grey[300]}`}
-      w="100%"
+      w="100vw"
+      overflow="hidden"
+      bg={theme.palette.primary.dark}
+      zIndex={theme.zIndex.appBar}
+      color="white"
     >
       <Box clone flexShrink={0}>
         <Typography variant="h5">{meta.appName}</Typography>
       </Box>
 
-      <div />
       {state.value.user && (
-        <x.div row justifyContent="flex-end">
-          <Button onClick={() => logout()}>Logout</Button>
+        <x.div display="flex" flexDirection="column" alignItems="flex-end">
+          <Typography variant="body2">
+            Logged in as: {state.value.user.name}
+          </Typography>
+          <Padding size={0.5} />
+          <Button color="inherit" variant="outlined" onClick={() => logout()}>
+            Logout
+          </Button>
         </x.div>
       )}
     </x.header>

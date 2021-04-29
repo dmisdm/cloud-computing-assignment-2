@@ -1,5 +1,6 @@
 import { StatusCodes } from "http-status-codes";
 import { NextApiResponse } from "next";
+import { StructError } from "superstruct";
 import { createApiError } from "web/lib/types";
 
 export abstract class BaseApiError<Details = unknown> {
@@ -21,4 +22,12 @@ export abstract class BaseApiError<Details = unknown> {
 export class InvalidAuthToken extends BaseApiError<string> {
   message = "Invalid authentication token";
   statusCode = StatusCodes.BAD_REQUEST;
+}
+
+export class SerdeError extends BaseApiError<StructError> {
+  message = "Invalid request payload";
+  statusCode = StatusCodes.BAD_REQUEST;
+  constructor(public details: StructError) {
+    super(details);
+  }
 }

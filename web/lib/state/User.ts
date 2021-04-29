@@ -22,7 +22,8 @@ export const userState = createState<UserState>({
 
 export const hydrateCurrentUser = () => {
   if (!userState.value.hydrated) {
-    userState.attach(Persistence("user-state"));
+    if (typeof window !== "undefined")
+      userState.attach(Persistence("user-state"));
     userState.hydrated.set(true);
 
     if (userState.value.user) {

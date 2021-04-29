@@ -8,6 +8,7 @@ import { v4 } from "uuid";
 const region = "ap-southeast-2";
 const db = new DynamoDB({ region });
 const s3 = new S3({ region });
+const artistImagesBucket = "cloud-computing-assignment-2-artist-images";
 
 const userId = "s3429288";
 const passwordTemplate = "012345678901234567890";
@@ -41,13 +42,14 @@ const seedMusicTable = async () => {
   }));
   let cache: typeof songPutRequests[0][] = [];
   for (const song of songPutRequests) {
-    if (cache.length >= 10) {
+    if (cache.length >= 1) {
       log("Writing batch");
       await db.batchWriteItem({
         RequestItems: {
           music: cache,
         },
       });
+      await new Promise((res) => setTimeout(res, 500));
       cache = [];
     }
     cache.push(song);
@@ -68,13 +70,12 @@ const Song = object({
   artist: string(),
 });
 const syncS3ArtistImages = async () => {
-  const Bucket = "cloud-computing-assignment-2-artist-images";
   const buckets = await s3.listBuckets({});
-  if (!buckets.Buckets?.find((bucket) => bucket.Name === Bucket))
-    await s3.createBucket({ Bucket });
+  if (!buckets.Buckets?.find((bucket) => bucket.Name === artistImagesBucket))
+    await s3.createBucket({ Bucket: artistImagesBucket });
 
   await s3.putBucketPolicy({
-    Bucket,
+    Bucket: artistImagesBucket,
     Policy: JSON.stringify({
       Statement: {
         Sid: "AllowPublicRead",
@@ -83,7 +84,7 @@ const syncS3ArtistImages = async () => {
           AWS: "*",
         },
         Action: "s3:GetObject",
-        Resource: `arn:aws:s3:::${Bucket}/*`,
+        Resource: `arn:aws:s3:::${artistImagesBucket}/*`,
       },
     }),
   });
@@ -111,14 +112,13 @@ const syncS3ArtistImages = async () => {
       console.error(await imgUrlRequest.text());
       throw Error("Bad request for image: " + url);
     }
-    const parsedUrl = new URL(url);
 
     const key = artist;
     const buffer = new Uint8Array(await imgUrlRequest.arrayBuffer());
     if (!uploadedArtistImages.has(key)) {
       console.log("Uploading " + key);
       await s3.putObject({
-        Bucket,
+        Bucket: artistImagesBucket,
         Key: key,
         Body: buffer,
       });
@@ -177,8 +177,8 @@ const run = async () => {
       KeySchema: [{ AttributeName: "email", KeyType: "HASH" }],
       AttributeDefinitions: [{ AttributeName: "email", AttributeType: "S" }],
       ProvisionedThroughput: {
-        ReadCapacityUnits: 100,
-        WriteCapacityUnits: 100,
+        ReadCapacityUnits: 1,
+        WriteCapacityUnits: 1,
       },
     });
     await waitForTableCreation("login");
@@ -192,28 +192,30 @@ const run = async () => {
       TableName: "music",
       KeySchema: [{ AttributeName: "id", KeyType: "HASH" }],
       ProvisionedThroughput: {
-        ReadCapacityUnits: 100,
-        WriteCapacityUnits: 100,
+        ReadCapacityUnits: 1,
+        WriteCapacityUnits: 1,
       },
       AttributeDefinitions: [{ AttributeName: "id", AttributeType: "S" }],
     });
     await waitForTableCreation("music");
     log("Seeding music table");
     await seedMusicTable();
+    log("Syncing/uploading artist images to S3");
+    await syncS3ArtistImages();
   }
-  log("Syncing/uploading artist images to S3");
-  await syncS3ArtistImages();
 
   if (tables.TableNames?.indexOf("user_subscriptions") === -1) {
     log("Creating user_subscriptions table");
     await db.createTable({
       TableName: "user_subscriptions",
-      KeySchema: [{ AttributeName: "email", KeyType: "HASH" }],
+      KeySchema: [{ AttributeName: "emailSongId", KeyType: "HASH" }],
       ProvisionedThroughput: {
-        ReadCapacityUnits: 100,
-        WriteCapacityUnits: 100,
+        ReadCapacityUnits: 1,
+        WriteCapacityUnits: 1,
       },
-      AttributeDefinitions: [{ AttributeName: "email", AttributeType: "S" }],
+      AttributeDefinitions: [
+        { AttributeName: "emailSongId", AttributeType: "S" },
+      ],
     });
     await waitForTableCreation("user_subscriptions");
   }
