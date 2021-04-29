@@ -49,34 +49,9 @@ export class UserService {
     name: string;
     password: string;
   }) {
-    const { Items } = await this.db.scan({
-      TableName,
-      ScanFilter: {
-        email: {
-          ComparisonOperator: "EQ",
-          AttributeValueList: [
-            {
-              S: params.email,
-            },
-          ],
-        },
-        user_name: {
-          ComparisonOperator: "EQ",
-          AttributeValueList: [
-            {
-              S: params.name,
-            },
-          ],
-        },
-      },
-    });
-    if (Items?.length) {
-      const first = User.create(dynamoDbItemToObject(Items[0]));
-      if (first.email === params.email) {
-        return "EmailExists";
-      } else {
-        return "UsernameExists";
-      }
+    const existing = await this.getUser(params.email);
+    if (existing) {
+      return "EmailExists";
     }
 
     await this.db.putItem({

@@ -23,6 +23,7 @@ export function NavBar() {
       bg={theme.palette.primary.dark}
       zIndex={theme.zIndex.appBar}
       color="white"
+      h="6rem"
     >
       <Box clone flexShrink={0}>
         <Typography variant="h5">{meta.appName}</Typography>

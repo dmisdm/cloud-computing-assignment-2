@@ -10,6 +10,7 @@ import { useRouter } from "next/router";
 import React from "react";
 import { useMutation } from "react-query";
 import { Persistence } from "@hookstate/persistence";
+import { queryClient } from "./queryClient";
 export type UserState = {
   hydrated: boolean;
   user: AuthTokenPayload | null;
@@ -70,20 +71,27 @@ export const useLoginMutation = () =>
     typeof Login.LoginSuccess.TYPE,
     typeof APIError["TYPE"] | string,
     typeof Login.LoginRequest.TYPE
-  >("login", (params) =>
-    fetch("/api/login", {
-      method: "POST",
-      body: JSON.stringify(params),
-      headers: {
-        "Content-Type": "application/json",
+  >(
+    "login",
+    (params) =>
+      fetch("/api/login", {
+        method: "POST",
+        body: JSON.stringify(params),
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }).then(async (r) => {
+        if (r.ok) {
+          return Login.LoginSuccess.create(await r.json());
+        } else {
+          throw APIError.create(await r.json());
+        }
+      }),
+    {
+      onMutate: () => {
+        queryClient.clear();
       },
-    }).then(async (r) => {
-      if (r.ok) {
-        return Login.LoginSuccess.create(await r.json());
-      } else {
-        throw APIError.create(await r.json());
-      }
-    })
+    }
   );
 export const useRegisterMutation = () =>
   useMutation<

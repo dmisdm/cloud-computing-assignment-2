@@ -35,14 +35,14 @@ const seedMusicTable = async () => {
           S: song.web_url,
         },
         year: {
-          N: song.year,
+          S: song.year,
         },
       },
     },
   }));
   let cache: typeof songPutRequests[0][] = [];
   for (const song of songPutRequests) {
-    if (cache.length >= 1) {
+    if (cache.length >= 2) {
       log("Writing batch");
       await db.batchWriteItem({
         RequestItems: {
@@ -99,21 +99,28 @@ const syncS3ArtistImages = async () => {
     );
   }
   const uploadedArtistImages = new Set<string>();
-
+  const existingImageKeys = new Set(
+    (await s3.listObjects({ Bucket: artistImagesBucket }))?.Contents?.map(
+      (obj) => obj.Key
+    ) || ([] as string[])
+  );
   for (const item of songs.Items) {
     const { img_url: url, id, artist } = Song.create({
       img_url: item.img_url.S,
       id: item.id.S,
       artist: item.artist.S,
     });
-
+    const key = artist;
+    if (existingImageKeys.has(key)) {
+      log(`Skipping uploading ${key} as it already exists`);
+      continue;
+    }
     const imgUrlRequest = await fetch(url);
     if (!imgUrlRequest.ok || !imgUrlRequest.body) {
       console.error(await imgUrlRequest.text());
       throw Error("Bad request for image: " + url);
     }
 
-    const key = artist;
     const buffer = new Uint8Array(await imgUrlRequest.arrayBuffer());
     if (!uploadedArtistImages.has(key)) {
       console.log("Uploading " + key);

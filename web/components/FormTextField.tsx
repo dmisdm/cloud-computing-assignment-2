@@ -3,7 +3,6 @@ import {
   FieldPath,
   FieldValues,
   FormState,
-  Path,
   UseFormRegister,
   get,
 } from "react-hook-form";
