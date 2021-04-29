@@ -3,7 +3,7 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build && next export",
-    "start": "next start"
+    "start": "next start -p ${PORT}"
   },
   "devDependencies": {
     "@hookstate/core": "^3.0.7",
