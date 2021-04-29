@@ -11,8 +11,13 @@
   "scripts": {
     "deploy": "yarn workspace ops deploy"
   },
-  "dependencies": {
+  "devDependencies": {
     "@aws-sdk/client-dynamodb": "^3.13.1",
-    "@aws-sdk/client-s3": "^3.13.1"
+    "@aws-sdk/client-s3": "^3.13.1",
+    "@types/uuid": "^8",
+    "cross-fetch": "^3.1.4",
+    "superstruct": "^0.15.1",
+    "ts-node": "^9.1.1",
+    "uuid": "^8.3.2"
   }
 }

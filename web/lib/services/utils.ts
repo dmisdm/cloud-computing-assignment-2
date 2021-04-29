@@ -1,5 +1,5 @@
 import { AttributeValue } from "@aws-sdk/client-dynamodb";
-import { Struct } from "superstruct";
+
 export const dynamoDbItemToObject = (item: {
   [k: string]: AttributeValue;
 }): Record<string, unknown> =>

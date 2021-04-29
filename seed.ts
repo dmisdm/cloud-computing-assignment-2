@@ -1,4 +1,4 @@
-#!/usr/bin/env yarn ts-node
+#!/usr/bin/env yarn ts-node --project ./seed.tsconfig.json
 import { object, string } from "superstruct";
 import fetch from "cross-fetch";
 import { DynamoDB } from "@aws-sdk/client-dynamodb";
@@ -184,6 +184,8 @@ const run = async () => {
     await waitForTableCreation("login");
     log("Seeding login table");
     await seedLoginTable();
+  } else {
+    log("Login table exists. Skipping seeding");
   }
 
   if (tables.TableNames?.indexOf("music") === -1) {
@@ -202,6 +204,8 @@ const run = async () => {
     await seedMusicTable();
     log("Syncing/uploading artist images to S3");
     await syncS3ArtistImages();
+  } else {
+    log("Music table exists. Skipping seeding.");
   }
 
   if (tables.TableNames?.indexOf("user_subscriptions") === -1) {
@@ -218,6 +222,8 @@ const run = async () => {
       ],
     });
     await waitForTableCreation("user_subscriptions");
+  } else {
+    log("Subscriptions exists. Skipping seeding.");
   }
 };
 
