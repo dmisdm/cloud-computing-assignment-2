@@ -1,28 +1,28 @@
-version: "3.3"
+version: "3.7"
 services:
-  nginx-proxy:
-    image: nginxproxy/nginx-proxy
+  #nginx-proxy:
+  #  image: nginxproxy/nginx-proxy
+  #  ports:
+  #    - 80:80
+  #    - 443:443
+  #  volumes:
+  #    - certs:/etc/nginx/certs \
+  #    - vhost:/etc/nginx/vhost.d \
+  #    - html:/usr/share/nginx/html \
+  #    - /var/run/docker.sock:/tmp/docker.sock \
+  #nginx-acme:
+  #  image: nginxproxy/acme-companion
+  #  volumes:
+  #    - certs:/etc/nginx/certs \
+  #    - vhost:/etc/nginx/vhost.d \
+  #    - html:/usr/share/nginx/html \
+  #    - /var/run/docker.sock:/tmp/docker.sock \
+  server:
+    restart: always
+    build: .
     ports:
       - 80:80
-      - 443:443
-    volumes:
-      - certs:/etc/nginx/certs \
-      - vhost:/etc/nginx/vhost.d \
-      - html:/usr/share/nginx/html \
-      - /var/run/docker.sock:/tmp/docker.sock \
-  nginx-acme:
-    image: nginxproxy/acme-companion
-    volumes:
-      - certs:/etc/nginx/certs \
-      - vhost:/etc/nginx/vhost.d \
-      - html:/usr/share/nginx/html \
-      - /var/run/docker.sock:/tmp/docker.sock \
-  server:
-    build: .
-    environment:
-      VIRTUAL_HOST: ec2-13-211-135-17.ap-southeast-2.compute.amazonaws.com
-      LETSENCRYPT_HOST: ec2-13-211-135-17.ap-southeast-2.compute.amazonaws.com
-volumes:
-  certs:
-  vhost:
-  html:
+#volumes:
+#  certs:
+#  vhost:
+#  html:
